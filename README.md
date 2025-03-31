@@ -1,11 +1,13 @@
 # Gerenciador de Itens - Rick and Morty API
 
-Este projeto é uma aplicação de gerenciamento de itens que consome a API pública [Rick and Morty API](https://rickandmortyapi.com/api/location). Com esta aplicação, é possível adicionar, excluir e editar itens. A implementação faz uso de `useEffect`, `useState` e `localStorage` para manipulação de estados e persistência de dados. O projeto é desenvolvido utilizando TypeScript para maior segurança e qualidade do código, além de um Design System para garantir consistência visual e melhor experiência do usuário.
+Este projeto é uma aplicação de gerenciamento de itens que consome a API pública [Rick and Morty API](https://rickandmortyapi.com/api/location). Com esta aplicação, é possível consultar, adicionar, excluir e editar itens. A implementação faz uso de `useEffect`, `useState` e `localStorage` para manipulação de estados e persistência de dados. O projeto é desenvolvido utilizando TypeScript para maior segurança e qualidade do código, além de um Design System para garantir consistência visual e melhor experiência do usuário.
 
 ## Tecnologias Utilizadas
 
 - React.js v19
 - Next.js v15
+- Node.js v20.16.0
+- NPM v10.8.1
 - ShadCN UI
 - TailwindCSS
 - TypeScript

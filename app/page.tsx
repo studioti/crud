@@ -4,13 +4,11 @@ import { memo, Suspense, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { toast } from "sonner"
 import { Edit, PlusCircle, Trash2 } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog"
-import { toast } from "sonner"
 
-// import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-// import { ColumnDef, ColumnFiltersState, SortingState, VisibilityState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
 
 const API_CARTOON = 'https://rickandmortyapi.com/api/location'
 
@@ -40,14 +38,10 @@ const Home = () => {
             const result = data.results
             const cartoons:any = Object.values(result)
 
-            // console.log('response', response)
-            // console.log('api cartoons:', cartoons)
-
 			// criando obj localstorage cartoons
 			if(!localStorage.cartoons) {
 				localStorage.setItem("cartoons", JSON.stringify(cartoons))
 				setCartoons(JSON.parse(localStorage.getItem("cartoons") || '""'))
-				// console.log('localstorage cartoons:', JSON.parse(localStorage.getItem("cartoons") || '""'))
 			} else {
 				setCartoons(JSON.parse(localStorage.getItem("cartoons") || '""'))
 			}
@@ -83,7 +77,6 @@ const Home = () => {
 
 			l_cartoon.push(item)
 			localStorage.setItem("cartoons", JSON.stringify(l_cartoon))
-			// console.log('item adicionado:', JSON.parse(localStorage.getItem("cartoons") || '""'))
 
 			setTypeInput('')
 			setNameInput('')
@@ -118,7 +111,6 @@ const Home = () => {
 				if(item.id === id) l_cartoon.splice(index, 1)
 			})
 
-			// console.log('registro deletado:', l_cartoon)
 			localStorage.setItem("cartoons", JSON.stringify(l_cartoon))
 
 			getAPI()
@@ -168,7 +160,6 @@ const Home = () => {
 				}
 			})
 
-			// console.log('registro atualizado:', updatedItem)
 			localStorage.setItem("cartoons", JSON.stringify(updatedItem))
 
 			getAPI()
@@ -197,7 +188,7 @@ const Home = () => {
 		<>
 			<div className="p-6 max-w-4xl mx-auto">
 				<h1 className="text-2xl font-bold mb-2">Gerenciador de Itens - Rick and Morty API</h1>
-				<p>Este projeto é uma aplicação de gerenciamento de itens que consome a API pública Rick and Morty API. Com esta aplicação, é possível adicionar, excluir e editar itens.</p>
+				<p>Este projeto é uma aplicação de gerenciamento de itens que consome a API pública Rick and Morty API. Com esta aplicação, é possível consultar, adicionar, excluir e editar itens.</p>
 				<div className="flex py-4 items-center justify-end">
 					<Dialog>
 						<DialogTrigger asChild>
