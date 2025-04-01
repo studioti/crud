@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { Edit, PlusCircle, Trash2 } from "lucide-react"
+import { Edit, Link, PlusCircle, Trash2 } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog"
 
@@ -188,7 +188,7 @@ const Home = () => {
 		<>
 			<div className="p-6 max-w-4xl mx-auto">
 				<h1 className="text-2xl font-bold mb-2">Gerenciador de Itens - Rick and Morty API</h1>
-				<p>Este projeto é uma aplicação de gerenciamento de itens que consome a API pública Rick and Morty API. Com esta aplicação, é possível consultar, adicionar, excluir e editar itens.</p>
+				<p>Este projeto é uma aplicação de gerenciamento de itens que consome a API pública Rick and Morty API. Com esta aplicação, é possível consultar, adicionar, excluir e editar itens. (<Link href="https://github.com/studioti/crud">Documentação</Link>)</p>
 				<div className="flex py-4 items-center justify-end">
 					<Dialog>
 						<DialogTrigger asChild>
