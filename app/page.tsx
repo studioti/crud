@@ -6,18 +6,20 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { Edit, PlusCircle, Trash2 } from "lucide-react"
+import { Edit, ListFilter, PlusCircle, Trash2 } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog"
-
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 const API_CARTOON = 'https://rickandmortyapi.com/api/location'
 
 const Home = () => {
 	
 	const [loading, setLoading] = useState(false)
-    const [data, setData] = useState([])
-    const [cartoons, setCartoons] = useState([])
+	const [data, setData] = useState([])
+	const [cartoons, setCartoons] = useState([])
+	const [t_cartoons, setTCartoons] = useState([])
+	const [filter, setFilter] = useState('Todos')
 	
 	const [typeInput, setTypeInput] = useState("")
 	const [nameInput, setNameInput] = useState("")
@@ -25,6 +27,7 @@ const Home = () => {
 
 	{/* consulta de api */}
 	const getAPI = async () => {
+
         try {
             
             setLoading(true)
@@ -41,10 +44,20 @@ const Home = () => {
 
 			// criando obj localstorage cartoons
 			if(!localStorage.cartoons) {
+
 				localStorage.setItem("cartoons", JSON.stringify(cartoons))
 				setCartoons(JSON.parse(localStorage.getItem("cartoons") || '""'))
+
 			} else {
-				setCartoons(JSON.parse(localStorage.getItem("cartoons") || '""'))
+
+				if(!localStorage.temp_cartoons) {
+					setCartoons(JSON.parse(localStorage.getItem("cartoons") || '""'))
+					
+				} else {
+					localStorage.setItem("temp_cartoons", JSON.stringify(t_cartoons))
+					setTCartoons(JSON.parse(localStorage.getItem("cartoons") || '""'))
+
+				}
 			}
 
         } catch (error) {
@@ -62,8 +75,30 @@ const Home = () => {
         }
     }
 
+	{/* filtro por tipo */}
+	const filterItem = async (param:any) => {
+
+		localStorage.setItem("temp_cartoons", localStorage.getItem("cartoons") || '""')
+		const t_cartoons = JSON.parse(localStorage.getItem('temp_cartoons') || '""')
+
+		const filter_cartoons = t_cartoons.filter((item:any) => {
+			return item.type === param
+		})
+
+		setCartoons(filter_cartoons)
+
+		if(param === 'Todos') {
+			localStorage.removeItem('temp_cartoons')
+			getAPI()
+		}
+			
+	}
+
 	{/* novo item */}
 	const addItem = async () => {
+		
+		localStorage.removeItem('temp_cartoons')
+		setFilter('Todos')
 
 		try {
 
@@ -104,6 +139,9 @@ const Home = () => {
 	{/* exclusao de item */}
 	const deleteItem = async (id:any) => {
 
+		localStorage.removeItem('temp_cartoons')
+		setFilter('Todos')
+
 		try {
 
 			const l_cartoon = JSON.parse(localStorage.getItem('cartoons') || '""')
@@ -134,6 +172,9 @@ const Home = () => {
 	
 	{/* atualização de item */}
 	const updateItem = async(id:number) => {
+
+		localStorage.removeItem('temp_cartoons')
+		setFilter('Todos')
 
 		const l_cartoon = JSON.parse(localStorage.getItem('cartoons') || '""')
 
@@ -191,6 +232,8 @@ const Home = () => {
 				<h1 className="text-2xl font-bold mb-2">Gerenciador de Itens - Rick and Morty API</h1>
 				<p>Este projeto é uma aplicação de gerenciamento de itens que consome a API pública Rick and Morty API. Com esta aplicação, é possível consultar, adicionar, excluir e editar itens. <Link href="https://github.com/studioti/crud"><u>Documentação</u></Link></p>
 				<div className="flex py-4 items-center justify-end">
+
+					{/* modal adicionar item */}
 					<Dialog>
 						<DialogTrigger asChild>
 							<Button className="cursor-pointer">
@@ -232,6 +275,27 @@ const Home = () => {
 							</DialogFooter>
 						</DialogContent>
 					</Dialog>
+
+					{/* dropdown filtro */}
+					<DropdownMenu>
+						
+						<DropdownMenuTrigger asChild>
+							<Button variant="default" className="ms-2 cursor-pointer">
+								<ListFilter />
+							</Button>
+						</DropdownMenuTrigger>
+
+						<DropdownMenuContent className="w-56">
+							<DropdownMenuLabel>Filtrar por Tipo</DropdownMenuLabel>							
+							<DropdownMenuSeparator />
+							<DropdownMenuRadioGroup value={filter} onValueChange={setFilter}>
+								<DropdownMenuRadioItem className="cursor-pointer" onClick = {()=> filterItem('Todos')} value="Todos">Ver todos</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem className="cursor-pointer" onClick = {()=> filterItem('Planet')} value="Planet">Planet</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem className="cursor-pointer" onClick = {()=> filterItem('Space station')} value="Space station">Space station</DropdownMenuRadioItem>
+							</DropdownMenuRadioGroup>
+						</DropdownMenuContent>
+					</DropdownMenu>
+
 				</div>
 				<div className="border rounded p-4">
 					<Table>
@@ -271,11 +335,6 @@ const Home = () => {
 																<DialogDescription>Realize as alterações do registro selecionado.</DialogDescription>
 															</DialogHeader>
 															<div className="grid gap-4 py-4">
-																{/* id# */}
-																<div className="grid grid-cols-4 items-center gap-4">
-																	<Label htmlFor="idEdit" className="text-right">#</Label>
-																	<Input disabled id="idEdit" defaultValue={ item['id'] } className="col-span-3" />
-																</div>
 							
 																{/* tipo */}
 																<div className="grid grid-cols-4 items-center gap-4">
