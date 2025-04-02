@@ -28,6 +28,8 @@ const Home = () => {
 	{/* consulta de api */}
 	const getAPI = async () => {
 
+		setFilter('Todos')
+
         try {
             
             setLoading(true)
