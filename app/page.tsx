@@ -1,6 +1,6 @@
 "use client"
 
-import { memo, Suspense, useEffect, useState } from "react"
+import { Fragment, memo, Suspense, useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,15 +15,16 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadio
 const API_CARTOON = "https://rickandmortyapi.com/api/location"
 
 const Home = () => {
-    const [loading, setLoading] = useState(false)
-    const [data, setData] = useState([])
-    const [cartoons, setCartoons] = useState([])
-    const [t_cartoons, setTCartoons] = useState([])
-    const [filter, setFilter] = useState("Todos")
+    const [loading, setLoading] = useState(false) // estado do loading
+    const [data, setData] = useState([]) // obj da api
+    const [cartoons, setCartoons] = useState([]) // obj localstorage
+    const [filter_temp_cartoons, setFilterTempCartoons] = useState([]) // filtro temp de obj localstorage
+    const [type_temp_cartoons, setTypeTempCartoons] = useState([]) // tipos do obj localstorage
+    const [filter, setFilter] = useState("Todos") // tipo selecionado
 
-    const [typeInput, setTypeInput] = useState("")
-    const [nameInput, setNameInput] = useState("")
-    const [dimensionInput, setDimensionInput] = useState("")
+    const [typeInput, setTypeInput] = useState("") // campo tipo
+    const [nameInput, setNameInput] = useState("") // campo nome
+    const [dimensionInput, setDimensionInput] = useState("") // campo dimensao
 
     {/* consulta de api */}
     const getAPI = async () => {
@@ -46,12 +47,25 @@ const Home = () => {
                 setCartoons(JSON.parse(localStorage.getItem("cartoons") || '""'))
             }
 
-            // se existir, criar o obj temp para o filtro
+            // se existir, criar o obj temp para os filtros
             else {
-                localStorage.setItem("temp_cartoons", JSON.stringify(t_cartoons))
-                setTCartoons(JSON.parse(localStorage.getItem("temp_cartoons") || '""'))
+                localStorage.setItem("temp_cartoons", JSON.stringify(filter_temp_cartoons))
+
+                setFilterTempCartoons(JSON.parse(localStorage.getItem("temp_cartoons") || '""'))
                 setCartoons(JSON.parse(localStorage.getItem("cartoons") || '""'))
             }
+
+            const types:any = []
+
+            cartoons.forEach((item: any) => {
+                types.push(item.type)
+            })
+
+            const type_temp_cartoons: any = [...new Set(types)]
+            setTypeTempCartoons(type_temp_cartoons)
+            
+            localStorage.setItem("type_cartoons", JSON.stringify(type_temp_cartoons))
+
         } catch (error) {
             console.log("Erro ao consultar os dados", error)
 
@@ -69,16 +83,16 @@ const Home = () => {
             if (param === "Todos") {
                 await getAPI()
             } else {
-                const t_cartoons = JSON.parse(localStorage.getItem("cartoons") || '""')
+                const filter_temp_cartoons = JSON.parse(localStorage.getItem("cartoons") || '""')
 
-                const filter_cartoons = t_cartoons.filter((item: any) => {
+                const filter_cartoons = filter_temp_cartoons.filter((item: any) => {
                     return item.type === param
                 })
 
                 setCartoons(filter_cartoons)
 
                 localStorage.setItem("temp_cartoons", JSON.stringify(filter_cartoons))
-                setTCartoons(JSON.parse(localStorage.getItem("temp_cartoons") || '""'))
+                setFilterTempCartoons(JSON.parse(localStorage.getItem("temp_cartoons") || '""'))
             }
         } catch (error) {
             console.log("Erro ao filtrar os itens", error)
@@ -203,16 +217,18 @@ const Home = () => {
     return (
         <>
             <div className="p-6 max-w-4xl mx-auto">
-                <h1 className="text-2xl font-bold mb-2">
-                    Gerenciador de Itens - Rick and Morty API
-                </h1>
-                <p>
-                    Este projeto é uma aplicação de gerenciamento de itens que consome a API pública Rick and Morty API. Com esta aplicação, é possível consultar, adicionar, excluir e editar itens. 
-                    <Link href="https://github.com/studioti/crud">
-                        <u>Documentação</u>
-                    </Link>
-                </p>
-                <div className="flex py-4 items-center justify-end">
+                <div className="mb-5">
+                    <h1 className="text-2xl font-bold mb-2">
+                        Gerenciador de Itens - Rick and Morty API
+                    </h1>
+                    <p>
+                        Este projeto é uma aplicação de gerenciamento de itens que consome a API pública Rick and Morty API. Com esta aplicação, é possível consultar, adicionar, excluir e editar itens. 
+                        <Link href="https://github.com/studioti/crud">
+                            <u>Documentação</u>
+                        </Link>
+                    </p>
+                </div>
+                <div className="flex py-5 items-center justify-end">
                     {/* adicionar item */}
                     <Dialog>
                         <DialogTrigger asChild>
@@ -261,8 +277,7 @@ const Home = () => {
                     {/* filtrar itens */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button
-                                variant="default" className="ms-2 cursor-pointer">
+                            <Button variant="default" className="ms-2 cursor-pointer">
                                 <ListFilter />
                             </Button>
                         </DropdownMenuTrigger>
@@ -271,9 +286,15 @@ const Home = () => {
                             <DropdownMenuLabel>Filtrar por Tipo</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuRadioGroup value={filter} onValueChange={setFilter}>
-                                <DropdownMenuRadioItem className="cursor-pointer" onClick={() => filterItem("Todos")} value="Todos">Ver todos</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem className="cursor-pointer" onClick={() => filterItem("Planet")} value="Planet">Planet</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem className="cursor-pointer" onClick={() => filterItem("Space station")} value="Space station">Space station</DropdownMenuRadioItem>
+                                {
+                                    type_temp_cartoons.map((item, index) => {
+                                        return (
+                                            <Fragment key={index}>
+                                                <DropdownMenuRadioItem className="cursor-pointer" onClick={() => filterItem(item)} value={ item }>{ item }</DropdownMenuRadioItem>
+                                            </Fragment>
+                                        )
+                                    })
+                                }
                             </DropdownMenuRadioGroup>
                         </DropdownMenuContent>
                     </DropdownMenu>
