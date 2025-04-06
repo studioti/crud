@@ -222,10 +222,7 @@ const Home = () => {
                         Gerenciador de Itens - Rick and Morty API
                     </h1>
                     <p>
-                        Este projeto é uma aplicação de gerenciamento de itens que consome a API pública Rick and Morty API. Com esta aplicação, é possível consultar, adicionar, excluir e editar itens. 
-                        <Link href="https://github.com/studioti/crud">
-                            <u>Documentação</u>
-                        </Link>
+                        Este projeto é uma aplicação de gerenciamento de itens que consome a API pública Rick and Morty API. Com esta aplicação, é possível consultar, adicionar, excluir e editar itens. <Link href="https://github.com/studioti/crud"><u>Documentação</u></Link>
                     </p>
                 </div>
                 <div className="flex py-5 items-center justify-end">
@@ -283,14 +280,15 @@ const Home = () => {
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent className="w-56">
-                            <DropdownMenuLabel>Filtrar por Tipo</DropdownMenuLabel>
+                            <DropdownMenuLabel>Filtrar por:</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuRadioGroup value={filter} onValueChange={setFilter}>
+                                <DropdownMenuRadioItem className="cursor-pointer" onClick={() => filterItem("Todos")} value="Todos">{ filter === 'Todos' ? <b>Ver todos</b> : 'Ver todos' }</DropdownMenuRadioItem>
                                 {
                                     type_temp_cartoons.map((item, index) => {
                                         return (
                                             <Fragment key={index}>
-                                                <DropdownMenuRadioItem className="cursor-pointer" onClick={() => filterItem(item)} value={ item }>{ item }</DropdownMenuRadioItem>
+                                                <DropdownMenuRadioItem className="cursor-pointer" onClick={() => filterItem(item)} value={ item }>{ filter === item ? <b>{ item }</b> : item }</DropdownMenuRadioItem>
                                             </Fragment>
                                         )
                                     })
